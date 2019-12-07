@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: drone-server
+  namespace: drone
+  labels:
+    app: drone
+    component: server
+spec:
+  serviceName: drone-server
+  replicas: 1
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: drone
+      version: 1.6.2
+      component: server
+  template:
+    metadata:
+      labels:
+        app: drone
+        version: 1.6.2
+        component: server
+    spec:
+      serviceAccountName: drone
+      containers:
+      - name: server
+        image: docker.io/drone/drone:1.6.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: Asia/Tokyo
+        envFrom:
+        - configMapRef:
+            name: drone-config
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        - name: grpc
+          containerPort: 9000
+          protocol: TCP
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 40m
+          limits:
+            memory: 2Gi
+            cpu: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"  # GKE Default StorageClass
+      resources:
+        requests:
+          storage: 1Gi

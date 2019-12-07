@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drone-agent-config
+  namespace: drone
+  labels:
+    app: drone
+data:
+  DOCKER_HOST: tcp://localhost:2375
+
+  DRONE_RPC_HOST: "drone.drone.svc"
+  DRONE_RPC_PROTO: "http"
+
+  DRONE_LOGS_DEBUG: "true"
+  DRONE_LOGS_PRETTY: "false"
+
+  DRONE_RUNNER_CAPACITY: "1"
+  DRONE_RUNNER_NAME: "runner"
+
+  ## 以下は秘密情報
+  DRONE_RPC_SECRET: "hogefugapiyo"  # Server との接続に使用
+

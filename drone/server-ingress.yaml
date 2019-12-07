@@ -1,0 +1,17 @@
+#apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "kanata-tmp"  # GCP上に存在する証明書を指定: 登録方法: https://cloud.google.com/load-balancing/docs/ssl-certificates
+  name: drone
+  namespace: drone
+spec:
+  rules:
+  - host: ""
+    http:
+      paths:
+      - backend:
+          serviceName: drone
+          servicePort: 80

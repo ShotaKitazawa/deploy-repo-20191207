@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone
+  namespace: drone
+  labels:
+    app: drone
+spec:
+  #type: ClusterIP
+  type: NodePort  # GKE 利用のため
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: grpc
+    port: 9000
+    targetPort: 9000
+  selector:
+    app: drone
+    component: server

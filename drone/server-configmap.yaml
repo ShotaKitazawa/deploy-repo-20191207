@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drone-config
+  namespace: drone
+  labels:
+    app: drone
+data:
+  DRONE_AGENTS_ENABLED: "true"
+
+  DRONE_SERVER_HOST: ""
+  DRONE_SERVER_PROTO: "https"
+  DRONE_RPC_HOST: "drone.integration.svc:80"
+  DRONE_RPC_PROTO: "http"
+
+  DRONE_GIT_ALWAYS_AUTH: "false"
+  DRONE_GITHUB_SERVER: "https://github.com"
+
+  DRONE_LOGS_DEBUG: "true"
+  DRONE_LOGS_PRETTY: "false"
+
+  DRONE_DATABASE_DRIVER: "sqlite3"
+
+  ## 以下は秘密情報
+  DRONE_RPC_SECRET: "hogefugapiyo"  # Runner との接続に使用
+  DRONE_GITHUB_CLIENT_ID: ""
+  DRONE_GITHUB_CLIENT_SECRET: ""

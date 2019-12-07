@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-agent
+  namespace: drone
+  labels:
+    app: drone
+    component: agent
+spec:
+  selector:
+    matchLabels:
+      app: drone
+      version: 1.6.2
+      component: agent
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: drone
+        version: 1.6.2
+        component: agent
+    spec:
+      serviceAccountName: drone-agent
+      containers:
+      - name: agent
+        image: docker.io/drone/agent:1.6.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: drone-agent-config
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 40m
+          limits:
+            memory: 2Gi
+            cpu: 1
+      - name: dind
+        image: "docker.io/library/docker:18.06.1-ce-dind"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DOCKER_DRIVER
+          value: overlay2
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 40m
+          limits:
+            memory: 2Gi
+            cpu: 1
+        volumeMounts:
+          - name: docker-graph-storage
+            mountPath: /var/lib/docker
+      volumes:
+      - name: docker-graph-storage
+        emptyDir: {}
